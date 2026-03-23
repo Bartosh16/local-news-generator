@@ -1,0 +1,36 @@
+{
+  "name": "local-news-generator",
+  "version": "1.0.0",
+  "description": "Zautomatyzowany system do generowania lokalnych artykułów informacyjnych dla polskich miast",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "discover": "tsx src/auto-discover.ts"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "cheerio": "^1.2.0",
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsdom": "^27.0.1",
+    "mysql2": "^3.17.4",
+    "node-cron": "^4.2.1",
+    "openai": "^6.22.0",
+    "puppeteer": "^24.37.5",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^25.3.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/sharp": "^0.31.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

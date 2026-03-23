@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local News Generator – Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #293548;
+      --hover: #334155;
+      --border: #334155;
+      --primary: #3b82f6;
+      --primary-h: #2563eb;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --dim: #64748b;
+      --r: 12px;
+      --font: 'Inter', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    button {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-h);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--hover);
+    }
+
+    .btn-success {
+      background: rgba(34, 197, 94, .15);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, .3);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, .1);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, .25);
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .btn-success {
+      background: rgba(34, 197, 94, .2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, .3);
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px;
+    }
+
+    .btn-icon {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 28px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* Search */
+    .search-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      width: 260px;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Cities grid */
+    .cities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+
+    .city-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      transition: border-color .2s;
+    }
+
+    .city-card:hover {
+      border-color: var(--primary);
+    }
+
+    .city-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .city-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .city-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .city-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .city-portals {
+      margin-top: 8px;
+      display: none;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .city-portals.show {
+      display: block;
+    }
+
+    .portal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .portal-url {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    /* Status badge */
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .badge-idle {
+      background: var(--hover);
+      color: var(--dim);
+    }
+
+    .badge-running {
+      background: rgba(59, 130, 246, .15);
+      color: var(--primary);
+      animation: pulse 1.5s infinite;
+    }
+
+    .badge-done {
+      background: rgba(34, 197, 94, .15);
+      color: var(--success);
+    }
+
+    .badge-error {
+      background: rgba(239, 68, 68, .15);
+      color: var(--error);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .5
+      }
+    }
+
+    /* Articles table */
+    .articles-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .articles-table th {
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .articles-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(51, 65, 85, .5);
+    }
+
+    .articles-table tr:hover td {
+      background: var(--surface);
+    }
+
+    /* Log panel */
+    .log-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      max-height: 240px;
+      overflow-y: auto;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .log-info {
+      color: var(--primary);
+    }
+
+    .log-success {
+      color: var(--success);
+    }
+
+    .log-error {
+      color: var(--error);
+    }
+
+    .log-warn {
+      color: var(--warning);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .65);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 520px;
+      max-width: calc(100vw - 32px);
+    }
+
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .check-result {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .check-ok {
+      background: rgba(34, 197, 94, .1);
+      border: 1px solid rgba(34, 197, 94, .3);
+      color: var(--success);
+    }
+
+    .check-fail {
+      background: rgba(239, 68, 68, .1);
+      border: 1px solid rgba(239, 68, 68, .3);
+      color: var(--error);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--dim);
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Header ───────────────────────────────────────────── -->
+  <div class="header">
+    <h1>📰 Local News Generator</h1>
+    <div class="header-actions">
+      <button class="btn-secondary btn-sm" onclick="openSettingsModal()">⚙️ Ustawienia</button>
+      <button class="btn-secondary btn-sm" onclick="refreshAll()">🔄 Odśwież</button>
+      <button class="btn-secondary btn-sm" id="testDbBtn" onclick="testDb()">🔌 Test DB</button>
+      <button class="btn-secondary btn-sm" onclick="openAddCityModal()">+ Dodaj miasto</button>
+      <button class="btn-primary" id="runAllBtn" onclick="runAll()">▶ Uruchom wszystkie</button>
+    </div>
+  </div>
+
+  <!-- ─── Main ─────────────────────────────────────────────── -->
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="value" id="totalCities">—</div>
+        <div class="label">Miasta</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="runningCount">0</div>
+        <div class="label">W trakcie</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="articlesCount">0</div>
+        <div class="label">Artykuły dzisiaj</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="totalCost">$0.00</div>
+        <div class="label">Koszt dzisiaj</div>
+      </div>
+    </div>
+
+    <!-- Cities -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Miasta</h2>
+        <input type="text" class="search-input" id="citySearch" placeholder="🔍 Szukaj miasta..."
+          oninput="filterCities()">
+      </div>
+      <div class="cities-grid" id="citiesGrid">
+        <div class="empty-state">⏳ Ładowanie miast...</div>
+      </div>
+    </div>
+
+    <!-- Articles -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Ostatnie artykuły</h2>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="articles-table">
+          <thead>
+            <tr>
+              <th>Czas</th>
+              <th>Miasto</th>
+              <th>Tytuł</th>
+              <th>Słowa</th>
+              <th>Koszt</th>
+              <th>Akcja</th>
+            </tr>
+          </thead>
+          <tbody id="articlesBody">
+            <tr>
+              <td colspan="5" class="empty-state">Brak artykułów</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Logi</h2>
+        <button class="btn-secondary btn-sm" onclick="document.getElementById('logPanel').innerHTML=''">Wyczyść</button>
+      </div>
+      <div class="log-panel" id="logPanel">
+        <span class="log-info">System gotowy. Użyj przycisków ▶ przy miastach lub "Uruchom wszystkie".</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal: Add City ───────────────────────────────────── -->
+  <div class="modal-overlay" id="addCityModal">
+    <div class="modal">
+      <h3>➕ Dodaj miasto</h3>
+      <div class="form-group">
+        <label>Nazwa miasta</label>
+        <input type="text" id="newCityName" placeholder="np. Kwidzyn" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('addCityModal')">Anuluj</button>
+        <button class="btn-primary" onclick="addCity()">Dodaj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal: Add Portal ─────────────────────────────────── -->
+  <div class="modal-overlay" id="addPortalModal">
+    <div class="modal">
+      <h3>🌐 Dodaj portal dla: <span id="addPortalCityName" style="color:var(--primary)"></span></h3>
+      <input type="hidden" id="addPortalCity" />
+      <div class="form-group">
+        <label>URL strony z newsami</label>
+        <input type="url" id="portalUrl" placeholder="https://kwidzyn.naszemiasto.pl/aktualnosci" />
+      </div>
+      <div class="form-group">
+        <label>CSS Selector linków do artykułów</label>
+        <input type="text" id="portalCss" placeholder="h2 a, article a, .news-link" />
+      </div>
+      <div class="form-group">
+        <label>Nazwa portalu (opcjonalnie)</label>
+        <input type="text" id="portalName" placeholder="np. Kwidzyn Nasze Miasto" />
+      </div>
+      <div id="suggestedSelectors" style="display:none; margin-bottom:14px; font-size:12px;"></div>
+      <button class="btn-secondary btn-sm" onclick="checkPortal()" style="margin-bottom:8px">🔍 Sprawdź
+        crawlability</button>
+      <div class="check-result" id="checkResult"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('addPortalModal')">Anuluj</button>
+        <button class="btn-primary" id="savePortalBtn" onclick="savePortal()">Zapisz portal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal: Settings ─────────────────────────────────── -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h3>⚙️ Ustawienia Modeli</h3>
+      <div class="form-group">
+        <label>Model: Piszący / Redagujący (Editor)</label>
+        <input type="text" id="setEditorModel" placeholder="gemini-2.5-flash" />
+      </div>
+      <div class="form-group">
+        <label>Model: Składający artykuł HTML (Compiler)</label>
+        <input type="text" id="setCompilerModel" placeholder="gpt-4.1-mini" />
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="setNewsApi" style="width:16px; height:16px;" />
+        <label style="margin-bottom:0">Włącz integrację z NewsAPI.org</label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('settingsModal')">Anuluj</button>
+        <button class="btn-primary" onclick="saveSettings()">Zapisz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal: Czytaj Artykuł ────────────────────────────── -->
+  <div class="modal-overlay" id="readModal">
+    <div class="modal" style="width:700px; max-height:85vh; display:flex; flex-direction:column;">
+      <h3 id="readTitle" style="margin-bottom:8px">Czytaj...</h3>
+      <div id="readContent"
+        style="overflow-y:auto; flex:1; font-size:14px; line-height:1.6; padding-right:12px; color:var(--text);"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('readModal')">Zamknij</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allCities = [];
+    let savedArticles = [];
+
+    // ─── Cities ──────────────────────────────────────────────
+
+    async function loadCities() {
+      try {
+        const res = await fetch('/api/cities');
+        const data = await res.json();
+        allCities = data.cities;
+        document.getElementById('totalCities').textContent = data.total;
+        renderCities(allCities);
+      } catch (e) { addLog('error', 'Błąd ładowania miast: ' + e); }
+    }
+
+    function renderCities(cities) {
+      const grid = document.getElementById('citiesGrid');
+      if (!cities.length) {
+        grid.innerHTML = '<div class="empty-state">Nie znaleziono miast</div>';
+        return;
+      }
+      grid.innerHTML = cities.map(c => {
+        const s = c.status || {};
+        const stage = s.stage || 'idle';
+        const badgeClass = ['done'].includes(stage) ? 'badge-done' : stage === 'error' ? 'badge-error' : stage === 'idle' ? 'badge-idle' : 'badge-running';
+        const isRunning = !['idle', 'done', 'error'].includes(stage);
+        const portalsHtml = (c.portals || []).map(p =>
+          `<div class="portal-row">
+          <span class="portal-url" title="${p.url}">${p.url}</span>
+          ${p.isCustom ? `<button class="btn-danger" onclick="deletePortal('${p.url}','${c.name}')">✕</button>` : ''}
+        </div>`
+        ).join('');
+
+        return `<div class="city-card" id="card-${encodeURIComponent(c.name)}">
+        <div class="city-card-header">
+          <div>
+            <div class="city-name">${c.name}</div>
+            <div class="city-meta" id="meta-${encodeURIComponent(c.name)}">${c.portalCount} portali • ${s.progress || 'Oczekuje'}</div>
+          </div>
+          <div class="city-actions">
+            <span class="badge ${badgeClass}" id="badge-${encodeURIComponent(c.name)}">${stage}</span>
+            ${stage === 'done' ? `<button class="btn-success btn-icon" title="Pobierz artykuł HTML" onclick="downloadArticle('${c.name}')">⬇️</button>` : ''}
+            ${stage === 'done' ? `<button class="btn-success btn-icon" title="Skopiuj HTML do schowka" onclick="copyArticleToClipboard('${c.name}')">📋</button>` : ''}
+            <button class="btn-secondary btn-icon" title="Pobierz JSON n8n" onclick="window.location.href='/api/n8n-json/'+encodeURIComponent('${c.name}')">⬇</button>
+            <button class="btn-secondary btn-icon" title="Pokaż portale" onclick="togglePortals('${c.name}')">☰</button>
+            <button class="btn-secondary btn-icon" title="Dodaj portal" onclick="openAddPortalModal('${c.name}')">+</button>
+            <button class="btn-primary btn-sm" id="run-${encodeURIComponent(c.name)}" onclick="runCity('${c.name}')" ${isRunning ? 'disabled' : ''}>▶</button>
+          </div>
+        </div>
+        <div class="city-portals" id="portals-${encodeURIComponent(c.name)}">
+          ${portalsHtml || '<span style="font-size:12px;color:var(--dim)">Brak portali (dodaj ▶ + )</span>'}
+        </div>
+      </div>`;
+      }).join('');
+    }
+
+    function filterCities() {
+      const q = document.getElementById('citySearch').value.toLowerCase();
+      renderCities(allCities.filter(c => c.name.toLowerCase().includes(q)));
+    }
+
+    function togglePortals(city) {
+      const el = document.getElementById('portals-' + encodeURIComponent(city));
+      if (el) el.classList.toggle('show');
+    }
+
+    // ─── Run ─────────────────────────────────────────────────
+
+    async function runCity(name) {
+      addLog('info', `▶ Pipeline uruchomiony: ${name}`);
+      setBadge(name, 'scraping');
+      try {
+        await fetch('/api/run/' + encodeURIComponent(name), { method: 'POST' });
+      } catch (e) { addLog('error', 'Błąd: ' + e); }
+    }
+
+    async function runAll() {
+      const btn = document.getElementById('runAllBtn');
+      btn.disabled = true; btn.textContent = '⏳ Uruchamiam...';
+      addLog('info', 'Uruchamianie dla wszystkich miast...');
+      try {
+        await fetch('/api/run-all', { method: 'POST' });
+        addLog('success', 'Pipeline uruchomiony');
+      } catch (e) { addLog('error', String(e)); }
+      btn.disabled = false; btn.textContent = '▶ Uruchom wszystkie';
+    }
+
+    // ─── Status polling ──────────────────────────────────────
+
+    const loggedMessages = new Set();
+
+    async function refreshStatus() {
+      try {
+        const [sRes, aRes] = await Promise.all([fetch('/api/status'), fetch('/api/articles')]);
+        const status = await sRes.json();
+        const articles = await aRes.json();
+
+        document.getElementById('runningCount').textContent = status.running;
+        document.getElementById('articlesCount').textContent = articles.articles.length;
+        const cost = articles.articles.reduce((s, a) => s + (a.cost || 0), 0);
+        document.getElementById('totalCost').textContent = '$' + cost.toFixed(4);
+
+        for (const s of status.statuses) {
+          const key = encodeURIComponent(s.city);
+          const meta = document.getElementById('meta-' + key);
+          const badge = document.getElementById('badge-' + key);
+          const btn = document.getElementById('run-' + key);
+          if (meta) meta.textContent = s.progress || s.stage;
+          if (badge) { badge.className = 'badge ' + stageBadge(s.stage); badge.textContent = s.stage; }
+          if (btn) btn.disabled = !['idle', 'done', 'error'].includes(s.stage);
+
+          if (s.stage === 'done') {
+            const msg = `✅ ${s.city}: ${s.progress}`;
+            if (!loggedMessages.has(msg)) {
+              addLog('success', msg);
+              loggedMessages.add(msg);
+            }
+          }
+          if (s.stage === 'error') {
+            const msg = `❌ ${s.city}: ${s.progress}`;
+            if (!loggedMessages.has(msg)) {
+              addLog('error', msg);
+              loggedMessages.add(msg);
+            }
+          }
+        }
+
+        const tbody = document.getElementById('articlesBody');
+        if (articles.articles.length > 0) {
+          savedArticles = articles.articles;
+          tbody.innerHTML = articles.articles.slice(0, 20).map((a, i) =>
+            `<tr>
+            <td style="color:var(--dim)">${a.time}</td>
+            <td><strong>${a.city}</strong></td>
+            <td>${a.title || ''}</td>
+            <td>${a.wordCount || 0}</td>
+            <td style="color:var(--warning)">$${(a.cost || 0).toFixed(4)}</td>
+            <td><button class="btn-secondary btn-sm" onclick="readArticle(${i})">👁️ Czytaj</button></td>
+          </tr>`
+          ).join('');
+        }
+      } catch { }
+    }
+
+    function stageBadge(s) {
+      if (s === 'done') return 'badge-done';
+      if (s === 'error') return 'badge-error';
+      if (s === 'idle') return 'badge-idle';
+      return 'badge-running';
+    }
+    function setBadge(city, stage) {
+      const badge = document.getElementById('badge-' + encodeURIComponent(city));
+      if (badge) { badge.className = 'badge ' + stageBadge(stage); badge.textContent = stage; }
+    }
+
+    // ─── Modals ──────────────────────────────────────────────
+
+    async function openSettingsModal() {
+      const res = await fetch('/api/settings');
+      const data = await res.json();
+      document.getElementById('setEditorModel').value = data.editorModel || '';
+      document.getElementById('setCompilerModel').value = data.compilerModel || '';
+      document.getElementById('setNewsApi').checked = data.newsApiEnabled;
+      document.getElementById('settingsModal').classList.add('show');
+    }
+
+    async function saveSettings() {
+      const editorModel = document.getElementById('setEditorModel').value;
+      const compilerModel = document.getElementById('setCompilerModel').value;
+      const newsApiEnabled = document.getElementById('setNewsApi').checked;
+
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ editorModel, compilerModel, newsApiEnabled })
+      });
+      addLog('success', 'Ustawienia zapisane!');
+      closeModal('settingsModal');
+    }
+
+    function readArticle(index) {
+      const article = savedArticles[index];
+      if (!article) return;
+      document.getElementById('readTitle').textContent = article.title;
+      document.getElementById('readContent').innerHTML = article.content || '<i style="color:var(--dim)">Brak treści do podglądu...</i>';
+      document.getElementById('readModal').classList.add('show');
+    }
+
+    function openAddCityModal() {
+      document.getElementById('newCityName').value = '';
+      document.getElementById('addCityModal').classList.add('show');
+    }
+
+    async function addCity() {
+      const name = document.getElementById('newCityName').value.trim();
+      if (!name) return;
+      const res = await fetch('/api/cities', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
+      if (res.ok) {
+        addLog('success', `Dodano miasto: ${name}`);
+        closeModal('addCityModal');
+        await loadCities();
+      } else {
+        addLog('error', 'Błąd dodawania miasta');
+      }
+    }
+
+    function openAddPortalModal(city) {
+      document.getElementById('addPortalCity').value = city;
+      document.getElementById('addPortalCityName').textContent = city;
+      document.getElementById('portalUrl').value = '';
+      document.getElementById('portalCss').value = '';
+      document.getElementById('portalName').value = '';
+      document.getElementById('checkResult').style.display = 'none';
+      document.getElementById('suggestedSelectors').style.display = 'none';
+      document.getElementById('addPortalModal').classList.add('show');
+    }
+
+    async function checkPortal() {
+      const url = document.getElementById('portalUrl').value.trim();
+      if (!url) return;
+      const result = document.getElementById('checkResult');
+      result.style.display = 'block';
+      result.className = 'check-result';
+      result.textContent = '⏳ Sprawdzam...';
+
+      try {
+        const res = await fetch('/api/portals/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+        const data = await res.json();
+        if (data.ok) {
+          result.className = 'check-result check-ok';
+          result.innerHTML = `✅ Crawlable [${data.method}] – znaleziono ${data.sampleLinks?.length || 0} linków<br>
+          <small style="opacity:.8">${(data.sampleLinks || []).slice(0, 2).join('<br>')}</small>`;
+
+          if (data.suggestedSelectors?.length) {
+            const sugDiv = document.getElementById('suggestedSelectors');
+            sugDiv.style.display = 'block';
+            sugDiv.innerHTML = '<strong style="color:var(--muted)">Sugerowane selektory:</strong><br>' +
+              data.suggestedSelectors.map(s =>
+                `<button type="button" class="btn-secondary btn-sm" style="margin:4px 4px 0 0; font-family:monospace;" onclick="document.getElementById('portalCss').value='${s.selector}'">
+                  ${s.selector} (${s.count})
+                </button>`
+              ).join('');
+          }
+        } else {
+          result.className = 'check-result check-fail';
+          result.textContent = `❌ Niedostępny (HTTP ${data.statusCode}) – metoda: ${data.method}`;
+          document.getElementById('suggestedSelectors').style.display = 'none';
+        }
+      } catch (e) {
+        result.className = 'check-result check-fail';
+        result.textContent = '❌ Błąd sprawdzania: ' + e;
+      }
+    }
+
+    async function savePortal() {
+      const city = document.getElementById('addPortalCity').value;
+      const url = document.getElementById('portalUrl').value.trim();
+      const cssSelector = document.getElementById('portalCss').value.trim();
+      const portalName = document.getElementById('portalName').value.trim();
+      if (!url || !cssSelector) { addLog('warn', 'URL i CSS selector są wymagane'); return; }
+
+      const res = await fetch('/api/portals', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city, url, cssSelector, portalName })
+      });
+      if (res.ok) {
+        addLog('success', `Portal dodany: ${url} dla ${city}`);
+        closeModal('addPortalModal');
+        await loadCities();
+      } else {
+        addLog('error', 'Błąd zapisywania portalu');
+      }
+    }
+
+    async function deletePortal(url, city) {
+      if (!confirm(`Usunąć portal ${url}?`)) return;
+      await fetch('/api/portals', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+      addLog('warn', `Usunięto portal: ${url}`);
+      await loadCities();
+    }
+
+    async function downloadArticle(city) {
+      try {
+        const res = await fetch('/api/article/' + encodeURIComponent(city));
+        if (!res.ok) {
+          addLog('error', `Artykuł dla ${city} nie znaleziony`);
+          return;
+        }
+        const html = await res.text();
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const link = document.createElement('a');
+        const dateStr = new Date().toISOString().split('T')[0];
+        link.href = URL.createObjectURL(blob);
+        link.download = `${city.toLowerCase().replace(/\s+/g, '-')}_${dateStr}.html`;
+        link.click();
+        addLog('success', `Pobrano artykuł: ${city}`);
+      } catch (e) {
+        addLog('error', `Błąd pobierania artykułu: ${e}`);
+      }
+    }
+
+    async function copyArticleToClipboard(city) {
+      try {
+        const res = await fetch('/api/article/' + encodeURIComponent(city));
+        if (!res.ok) {
+          addLog('error', `Artykuł dla ${city} nie znaleziony`);
+          return;
+        }
+        const html = await res.text();
+        await navigator.clipboard.writeText(html);
+        addLog('success', `Skopiowano HTML artykułu: ${city}`);
+      } catch (e) {
+        addLog('error', `Błąd kopiowania: ${e}`);
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+    document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); }));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show')); });
+
+    // ─── DB Test ─────────────────────────────────────────────
+
+    async function testDb() {
+      const btn = document.getElementById('testDbBtn');
+      btn.disabled = true; btn.textContent = '⏳ Testuję...';
+      addLog('info', 'Wysyłam testowy rekord do bazy...');
+      try {
+        const res = await fetch('/api/test-db', { method: 'POST' });
+        const data = await res.json();
+        if (data.ok) {
+          addLog('success', `✅ DB OK – ID: ${data.article_id}, czas: ${data.elapsed_ms}ms`);
+        } else {
+          addLog('error', '❌ DB Error: ' + data.error);
+        }
+      } catch (e) {
+        addLog('error', '❌ DB Error: ' + e);
+      }
+      btn.disabled = false; btn.textContent = '🔌 Test DB';
+    }
+
+    // ─── Helpers ─────────────────────────────────────────────
+
+    function refreshAll() { loadCities(); refreshStatus(); addLog('info', 'Odświeżono'); }
+
+    function addLog(type, msg) {
+      const panel = document.getElementById('logPanel');
+      const time = new Date().toLocaleTimeString('pl-PL');
+      panel.innerHTML += `<div class="log-${type}">[${time}] ${msg}</div>`;
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    // ─── Init ─────────────────────────────────────────────────
+    loadCities();
+    setInterval(refreshStatus, 3000);
+  </script>
+</body>
+
+</html>
